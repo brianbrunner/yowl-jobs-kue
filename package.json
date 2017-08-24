@@ -1,0 +1,38 @@
+{
+  "name": "yowl-jobs-kue",
+  "version": "0.1.0",
+  "description": "Job queue for yowl managed by kue.",
+  "main": "index.js",
+  "directories": {
+    "test": "test"
+  },
+  "scripts": {
+    "lint": "jshint lib/*.js lib/**/*.js",
+    "test": "mocha test/"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/brianbrunner/yowl-kue.git"
+  },
+  "keywords": [
+    "chatbot"
+  ],
+  "author": "brian.brunner@gmail.com",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/brianbrunner/yowl-kue/issues"
+  },
+  "dependencies": {
+    "kue": "^0.11.6"
+  },
+  "devDependencies": {
+    "jshint": "latest",
+    "browserify": "latest",
+    "mocha": "latest"
+  },
+  "jshintConfig": {
+    "node": true,
+    "proto": true
+  },
+  "homepage": "https://github.com/brianbrunner/yowl-kue#readme"
+}
