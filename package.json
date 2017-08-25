@@ -1,6 +1,6 @@
 {
   "name": "yowl-jobs-kue",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "Job queue for yowl managed by kue.",
   "main": "index.js",
   "directories": {
@@ -24,7 +24,7 @@
   },
   "dependencies": {
     "kue": "^0.11.6",
-    "yowl": "^0.5.0"
+    "yowl": "latest"
   },
   "devDependencies": {
     "jshint": "latest",
