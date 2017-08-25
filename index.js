@@ -1,5 +1,6 @@
 var kue = require('kue');
 var Route = require('yowl').Route;
+var sessionSpawner = require('yowl-spawn-session');
 
 var proto = module.exports = function(options) {
 
@@ -21,21 +22,18 @@ var proto = module.exports = function(options) {
 proto.process = function process(eventName, processor) {
   if (this.bot) {
     this.queue.process(eventName, (job, jobContext, done) => {
-      var platform = this.platforms[job.data.platformId];
       var context = {
-        platform: platform,
         sessionId: job.data.sessionId
       }
       var event = {
-        platform: platform,
         type: eventName,
         job: job,
         jobContext: jobContext
       }
-      this.bot.prepare(context, event, function() {
+      this.bot.spawnSession(job.data.platformId, context, event, function() {
         event.job.data = event.job.data.jobData;
         processor(context, event, done);
-      })
+      });
     });
   } else {
     this.processors[eventName] = processor;
@@ -47,19 +45,14 @@ proto.init = function init(bot) {
   // Grab a reference to our bot
   this.bot = bot
 
-  // Associate our platforms
-  this.platforms = {};
-  this.bot.extensions.filter(function(extension) {
-      return extension.id && extension.capabilities && extension.send;
-  }).forEach((extension) => {
-    this.platforms[extension.id] = extension;
-  })
-
-  // Associate our session managers
-  if (this.options.session_managers) {
-    this.session_managers = options.session_managers;
-  } else if (this.options.session_manager) {
-    this.session_managers = [options.session_manager];
+  if (!this.bot.spawnSession) {
+    // Associate our session managers
+    if (this.options.session_managers) {
+      var session_managers = options.session_managers;
+    } else if (this.options.session_manager) {
+      var session_managers = [options.session_manager];
+    }
+    sessionSpawner({ session_managers: session_managers })(bot);
   }
 
   // Sort of hacky, but we need this to be called after the context/event
