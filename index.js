@@ -21,7 +21,7 @@ var proto = module.exports = function(options) {
 proto.process = function process(eventName, processor) {
   if (this.bot) {
     this.queue.process(eventName, (job, jobContext, done) => {
-      var platform = this.platforms[job.data.platformName];
+      var platform = this.platforms[job.data.platformId];
       var context = {
         platform: platform,
         sessionId: job.data.sessionId
@@ -44,18 +44,16 @@ proto.process = function process(eventName, processor) {
 
 proto.init = function init(bot) {
 
+  // Grab a reference to our bot
+  this.bot = bot
+
   // Associate our platforms
   this.platforms = {};
-  if (this.options.platform) {
-    this.platforms[this.options.platform.name] = this.options.platform;
-  }
-  if (this.options.platforms) {
-    this.options.platforms.forEach((platform) => {
-      if (!this.platforms[platform.name]) {
-        this.platforms[platform.name] = platform;
-      }
-    });
-  }
+  this.bot.extensions.filter(function(extension) {
+      return extension.id && extension.capabilities && extension.send;
+  }).forEach((extension) => {
+    this.platforms[extension.id] = extension;
+  })
 
   // Associate our session managers
   if (this.options.session_managers) {
@@ -63,9 +61,6 @@ proto.init = function init(bot) {
   } else if (this.options.session_manager) {
     this.session_managers = [options.session_manager];
   }
-
-  // Grab a reference to our bot
-  this.bot = bot
 
   // Sort of hacky, but we need this to be called after the context/event
   // are prepared but before any other middleware is run
@@ -82,7 +77,7 @@ proto.init = function init(bot) {
 proto.attachCreator = function attachCreator(context, event) {
   context.createJob = (jobName, jobData) => {
     var data = {
-      platformName: context.platform.name,
+      platformId: context.platform.id,
       sessionId: context.sessionId,
       jobData: jobData
     };
