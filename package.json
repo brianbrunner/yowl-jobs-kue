@@ -1,6 +1,6 @@
 {
   "name": "yowl-jobs-kue",
-  "version": "0.1.1",
+  "version": "0.1.2",
   "description": "Job queue for yowl managed by kue.",
   "main": "index.js",
   "directories": {
