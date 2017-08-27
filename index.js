@@ -48,9 +48,9 @@ proto.init = function init(bot) {
   if (!this.bot.spawnSession) {
     // Associate our session managers
     if (this.options.session_managers) {
-      var session_managers = options.session_managers;
+      var session_managers = this.options.session_managers;
     } else if (this.options.session_manager) {
-      var session_managers = [options.session_manager];
+      var session_managers = [this.options.session_manager];
     }
     sessionSpawner({ session_managers: session_managers })(bot);
   }
